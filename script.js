@@ -10,8 +10,11 @@ const Gameboard = (() => {
                   }
             }
       }
-
       generateGameBoard();
+
+      const getGameboard = () => {
+            return gameBoard;
+      }
       
       const restartGameBoard = () => {
             gameBoard.length = 0;
@@ -26,6 +29,15 @@ const Gameboard = (() => {
       };
 
       const checkPattern = () => {
+            const checkWinner = (token) => {
+                  if(token === "X") {
+                        console.log("X Win");
+                  }else if(token === "O") {
+                        console.log("O Win");
+                  }
+                  restartGameBoard();
+            }
+
             const checkLine = (a, b, c) => {
                   return a === b && b === c && a !== undefined;
             }
@@ -61,47 +73,62 @@ const Gameboard = (() => {
                   }      
             }
             drawCheck();
-
-            const checkWinner = (token) => {
-                  if(token === "X") {
-                        console.log("X Win");
-                  }else if(token === "O") {
-                        console.log("O Win");
-                  }
-                  restartGameBoard();
-            }
-
       };
 
-      return {updateGameBoard, restartGameBoard, gameBoard};
+      return {updateGameBoard, restartGameBoard, getGameboard};
 })();
 
 const Player1 = {
       token : "X",
+      score : 0,
       turn: false
 }
 
 const Player2 = {
       token : "O",
+      score : 0,
       turn: false
 }
 
-const gameFlow = {
+const player1Turn = (a, b) => {
+      Gameboard.updateGameBoard(a, b, Player1["token"]);
+}
+
+const player2Turn = (a, b) => {
+      Gameboard.updateGameBoard(a, b, Player2["token"]);
+}
+
+const startGame = document.querySelector("button");
+startGame.addEventListener("click", (e) => {
+      e.preventDefault();
+      let playerInput;
+      const input = () => {
+            playerInput = prompt("Player 1/2:");
+      }
+      // input();
+      // player1Turn(Number(playerInput[0]), Number(playerInput[1]));
+      // input();
+      // player2Turn(Number(playerInput[0]), Number(playerInput[1]));
+      // Gameboard.updateGameBoard(Number(playerInput[0]), Number(playerInput[1]), Player1["token"]);
+      console.table(Gameboard.getGameboard());
+});
+
+const playGame = {
 
 }
 
 // Testing
-Gameboard.updateGameBoard(0, 0, Player2["token"]);
-Gameboard.updateGameBoard(0, 1, Player1["token"]);
-Gameboard.updateGameBoard(0, 2, Player2["token"]);
-Gameboard.updateGameBoard(1, 0, Player2["token"]);
-Gameboard.updateGameBoard(1, 1, Player1["token"]);
-Gameboard.updateGameBoard(1, 2, Player2["token"]);
-Gameboard.updateGameBoard(2, 0, Player1["token"]);
-Gameboard.updateGameBoard(2, 1, Player2["token"]);
-Gameboard.updateGameBoard(2, 2, Player1["token"]);
+// Gameboard.updateGameBoard(0, 0, Player2["token"]);
+// Gameboard.updateGameBoard(0, 1, Player1["token"]);
+// Gameboard.updateGameBoard(0, 2, Player2["token"]);
+// Gameboard.updateGameBoard(1, 0, Player2["token"]);
+// Gameboard.updateGameBoard(1, 1, Player1["token"]);
+// Gameboard.updateGameBoard(1, 2, Player2["token"]);
+// Gameboard.updateGameBoard(2, 0, Player1["token"]);
+// Gameboard.updateGameBoard(2, 1, Player2["token"]);
+// Gameboard.updateGameBoard(2, 2, Player1["token"]);
 
-console.table(Gameboard.gameBoard);
+// console.table(Gameboard.getGameboard());
 
 
 
