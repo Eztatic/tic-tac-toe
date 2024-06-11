@@ -10,8 +10,7 @@ const Gameboard = (() => {
                   }
             }
       }
-      generateGameBoard();
-
+      
       const getGameboard = () => {
             return gameBoard;
       }
@@ -28,16 +27,20 @@ const Gameboard = (() => {
             }
       };
 
-      const checkPattern = () => {
-            const checkWinner = (token) => {
-                  if(token === "X") {
-                        console.log("X Win");
-                  }else if(token === "O") {
-                        console.log("O Win");
-                  }
-                  restartGameBoard();
+      const checkWinner = (token) => {
+            if(token === "X") {
+                  Player1.score++;
+                  console.log("X Win");
+            }else if(token === "O") {
+                  Player2.score++;
+                  console.log("O Win");  
             }
+            Player1.turn = false;
+            Player2.turn = false;
+            restartGameBoard();  
+      }
 
+      const checkPattern = () => {
             const checkLine = (a, b, c) => {
                   return a === b && b === c && a !== undefined;
             }
@@ -46,8 +49,10 @@ const Gameboard = (() => {
             for(let cell = 0; cell < 3; cell++) {
                   if(checkLine(gameBoard[cell][0], gameBoard[cell][1], gameBoard[cell][2])){
                         checkWinner(gameBoard[cell][0]);
+                        restartGameBoard();
                   }else if(checkLine(gameBoard[0][cell], gameBoard[1][cell], gameBoard[2][cell])){
                         checkWinner(gameBoard[0][cell]);
+                        
                   };
             }
 
@@ -75,13 +80,13 @@ const Gameboard = (() => {
             drawCheck();
       };
 
-      return {updateGameBoard, restartGameBoard, getGameboard};
+      return {generateGameBoard, updateGameBoard, restartGameBoard, getGameboard, checkWinner};
 })();
 
 const Player1 = {
       token : "X",
       score : 0,
-      turn: false
+      turn: true
 }
 
 const Player2 = {
@@ -90,31 +95,57 @@ const Player2 = {
       turn: false
 }
 
-const player1Turn = (a, b) => {
-      Gameboard.updateGameBoard(a, b, Player1["token"]);
+const player1Turn = (row, col) => {
+      Player1.turn = false;
+      Player2.turn = true;
+      Gameboard.updateGameBoard(row, col, Player1.token);
 }
 
-const player2Turn = (a, b) => {
-      Gameboard.updateGameBoard(a, b, Player2["token"]);
+const player2Turn = (row, col) => {
+      Player1.turn = true;
+      Player2.turn = false;
+      Gameboard.updateGameBoard(row, col, Player2.token);
 }
 
-const startGame = document.querySelector("button");
-startGame.addEventListener("click", (e) => {
-      e.preventDefault();
-      let playerInput;
-      const input = () => {
-            playerInput = prompt("Player 1/2:");
+// const startGame = document.querySelector("button");
+// startGame.addEventListener("click", (e) => {
+//       e.preventDefault();
+//       Player1.turn = true;
+//       for(let p = 0; p < 9; p++){
+//             if(Player1.turn === false && Player2.turn === false) {
+//                   break;
+//             }
+//             let playerInput = prompt("Player 1/2:");
+//             if(!playerInput) {break;}
+//             const row = Number(playerInput[0]);
+//             const col = Number(playerInput[1]);
+//             // const [row, col] = playerInput.split(',').map(Number);
+//             if(Player1.turn) {
+//                   player1Turn(row, col);
+//             }else {
+//                   player2Turn(row, col);
+//             }
+//             console.table(Gameboard.getGameboard());
+//       }
+// });
+
+const startRound = () => {
+      Player1.turn = true;
+      for(let p = 0; p < 9; p++){
+            if(Player1.turn === false && Player2.turn === false) {
+                  break;
+            }
+            let playerInput = prompt("Player 1/2:");
+            if(!playerInput) {break;}
+            const row = Number(playerInput[0]);
+            const col = Number(playerInput[1]);
+            if(Player1.turn) {
+                  player1Turn(row, col);
+            }else {
+                  player2Turn(row, col);
+            }
+            console.table(Gameboard.getGameboard());
       }
-      // input();
-      // player1Turn(Number(playerInput[0]), Number(playerInput[1]));
-      // input();
-      // player2Turn(Number(playerInput[0]), Number(playerInput[1]));
-      // Gameboard.updateGameBoard(Number(playerInput[0]), Number(playerInput[1]), Player1["token"]);
-      console.table(Gameboard.getGameboard());
-});
-
-const playGame = {
-
 }
 
 // Testing
