@@ -38,67 +38,38 @@ const GameBoard = () => {
       const updateGameBoard = (row, col, token) => {
             if(gameBoard[row][col].isEmpty() === true) {
                   gameBoard[row][col].setValue(token);
-                  checkPattern();
             }
       };
 
-      const checkWinner = (token) => {
-            if(token.getValue() === "X") {
-                  console.log("X Win");
-            }else if(token.getValue() === "O") {
-                  console.log("O Win");  
-            }
-            Player1.turn = false;
-            Player2.turn = false;
-            restartGameBoard();  
-      }
-
       const checkPattern = () => {
-            const checkLine = (row, col, token) => {
-                  const [rowVal, colVal, tokenVal] = [row.getValue(), col.getValue(), token.getValue()];
-                  return rowVal === colVal && colVal === tokenVal && rowVal !== "";
+            const checkLine = (a, b, c) => {
+                  const [aVal, bVal, cVal] = [a.getValue(), b.getValue(), c.getValue()];
+                  return aVal === bVal && bVal === cVal && aVal !== "";
             };
 
             // Row/Column Checker
             for(let cell = 0; cell < 3; cell++) {
                   if(checkLine(gameBoard[cell][0], gameBoard[cell][1], gameBoard[cell][2])){
-                        checkWinner(gameBoard[cell][0]);
+                        return true
                   }else if(checkLine(gameBoard[0][cell], gameBoard[1][cell], gameBoard[2][cell])){
-                        checkWinner(gameBoard[0][cell]);  
-                  };
+                        return true;
+                  }else{
+                        console.log("No Pattern");
+                  }
             }
 
             // Diagonal Checker
             if(checkLine(gameBoard[0][0], gameBoard[1][1], gameBoard[2][2])){
-                  checkWinner(gameBoard[1][1]);
+                  return true;
             }else if(checkLine(gameBoard[0][2], gameBoard[1][1], gameBoard[2][0])){
-                  checkWinner(gameBoard[1][1]);
+                  return true;
             }
-
-            const drawCheck = () => {
-                  let occupiedCell = 0;
-                  gameBoard.forEach((row) => {
-                        row.forEach((cell) => {
-                              if(cell.isEmpty() !== true) {
-                                    occupiedCell++;
-                              }
-                        })
-                  });
-                  if(occupiedCell === 9) {
-                        console.log("It's a draw");
-                        restartGameBoard();
-                  }      
-            }
-            drawCheck();
       };
 
-      return {generateGameBoard, updateGameBoard, restartGameBoard, getGameboard, checkWinner};
+      return {generateGameBoard, getGameboard, updateGameBoard, restartGameBoard, checkPattern};
 };
 
 const GameController = () => {
-
-      const theGameBoard = GameBoard(); 
-
       const Player1 = {
             token : "X",
             score : 0,
@@ -110,48 +81,74 @@ const GameController = () => {
             score : 0,
             turn: false
       }
+ 
+      let gameStatus = false;
+      let currentPlayer = Player1;
 
-      let activePlayer = Player1;
+      const theGameBoard = GameBoard();
 
-      const switchPlayer = (currentPlayer) => {
-            if(activePlayer === currentPlayer){
-                  currentPlayer.turn = true;
+      const switchTurn = () => {
+            if(currentPlayer === Player1){
+                  Player1.turn = false;
+                  Player2.turn = true;
+                  currentPlayer = Player2
+            }else if(currentPlayer === Player2){
+                  Player1.turn = true;
+                  Player2.turn = false;
+                  currentPlayer = Player1;
             }
       }
 
-      const playRound = (row) => {
-            GameBoard.updateGameBoard(a, b, c)
-      }
-      
-      const player1Turn = (row, col) => {
-            Player1.turn = false;
-            Player2.turn = true;
-            Gameboard.updateGameBoard(row, col, Player1.token);
-      }
-      
-      const player2Turn = (row, col) => {
-            Player1.turn = true;
-            Player2.turn = false;
-            Gameboard.updateGameBoard(row, col, Player2.token);
+      const playRound = (row, col) => {
+            theGameBoard.updateGameBoard(row, col, currentPlayer.token);
       }
 
-      Player1.turn = true;
-      for(let p = 0; p < 9; p++){
-            if(Player1.turn === false && Player2.turn === false) {
-                  break;
+      const startGame = () => {
+            gameStatus = true;
+            theGameBoard.generateGameBoard();
+            while(gameStatus) {
+                  let input = prompt("Enter row and col (separated by a space)").split(' ');
+                  let testRow = Number(input[0]);
+                  let testCol = Number(input[1]);
+                  playRound(testRow, testCol);
+                  console.log(`${currentPlayer.token} is done`);
+                  checkWinner(currentPlayer);
+                  switchTurn();
             }
-            let playerInput = prompt("Player 1/2:");
-            if(!playerInput) {break;}
-            const row = Number(playerInput[0]);
-            const col = Number(playerInput[1]);
-            if(Player1.turn) {
-                  player1Turn(row, col);
-            }else {
-                  player2Turn(row, col);
-            }
-            console.table(Gameboard.getGameboard());
       }
+
+      const checkWinner = (currPlayer) => {
+            if(theGameBoard.checkPattern() === true) {
+                  console.log(`${currPlayer.token} won the round`);
+                  gameStatus = false;
+                  Player1.turn = false;
+                  Player2.turn = false;
+                  theGameBoard.restartGameBoard(); 
+            }else{
+                  //Check if draw
+                  let occupiedCell = 0;
+                  theGameBoard.getGameboard().forEach((row) => {
+                        row.forEach((cell) => {
+                              if(cell.isEmpty() !== true) {
+                                    occupiedCell++;
+                              }
+                        })
+                  });
+                  if(occupiedCell === 9) {
+                        console.log("It's a draw");
+                        gameStatus = false;
+                        Player1.turn = false;
+                        Player2.turn = false;
+                        theGameBoard.restartGameBoard(); 
+                  } 
+            } 
+      }
+
+      return { startGame };
 }
+
+const newGame = GameController();
+//newGame.startGame();
 
 // Testing
 // Gameboard.updateGameBoard(0, 0, Player2["token"]);
@@ -188,7 +185,44 @@ const GameController = () => {
 //       }
 // });
 
+      // Player1.turn = true;
+      // for(let p = 0; p < 9; p++){
+      //       if(Player1.turn === false && Player2.turn === false) {
+      //             break;
+      //       }
+      //       let playerInput = prompt("Player 1/2:");
+      //       if(!playerInput) {break;}
+      //       const row = Number(playerInput[0]);
+      //       const col = Number(playerInput[1]);
+      //       if(Player1.turn) {
+      //             player1Turn(row, col);
+      //       }else {
+      //             player2Turn(row, col);
+      //       }
+      //       console.table(Gameboard.getGameboard());
+      // }
 
+// const checkWinner = (chkPattern = checkPattern(), currentPlayer) => {
+      //       if(chkPattern === true) {
+      //             console.log(`${currentPlayer.token} won the round`);
+      //       }else{
+      //             //Check if draw
+      //             let occupiedCell = 0;
+      //             gameBoard.forEach((row) => {
+      //                   row.forEach((cell) => {
+      //                         if(cell.isEmpty() !== true) {
+      //                               occupiedCell++;
+      //                         }
+      //                   })
+      //             });
+      //             if(occupiedCell === 9) {
+      //                   console.log("It's a draw");
+      //             } 
+      //       }
+      //       Player1.turn = false;
+      //       Player2.turn = false;
+      //       restartGameBoard();  
+      // }
 
 
 
