@@ -26,7 +26,7 @@ const GameBoard = () => {
             }
       }
       
-      const getGameboard = () => {
+      const getGameBoard = () => {
             return gameBoard;
       }
       
@@ -55,8 +55,6 @@ const GameBoard = () => {
                         return true
                   }else if(checkLine(gameBoard[0][cell], gameBoard[1][cell], gameBoard[2][cell])){
                         return true;
-                  }else{
-                        console.log("No Pattern");
                   }
             }
 
@@ -68,7 +66,7 @@ const GameBoard = () => {
             }
       };
 
-      return {generateGameBoard, getGameboard, updateGameBoard, restartGameBoard, checkPattern};
+      return {generateGameBoard, getGameBoard, updateGameBoard, restartGameBoard, checkPattern};
 };
 
 const GameController = () => {
@@ -146,86 +144,27 @@ const GameController = () => {
             } 
       }
 
-      return { startGame };
+      return { startGame, getGameBoard : theGameBoard.getGameBoard };
 }
 
 const newGame = GameController();
 //newGame.startGame();
 
-// Testing
-// Gameboard.updateGameBoard(0, 0, Player2["token"]);
-// Gameboard.updateGameBoard(0, 1, Player1["token"]);
-// Gameboard.updateGameBoard(0, 2, Player2["token"]);
-// Gameboard.updateGameBoard(1, 0, Player2["token"]);
-// Gameboard.updateGameBoard(1, 1, Player1["token"]);
-// Gameboard.updateGameBoard(1, 2, Player2["token"]);
-// Gameboard.updateGameBoard(2, 0, Player1["token"]);
-// Gameboard.updateGameBoard(2, 1, Player2["token"]);
-// Gameboard.updateGameBoard(2, 2, Player1["token"]);
+const GameDisplay = () => {
+      const game = GameController();
+      const announcer = document.querySelector("#announcer");
+      const p1Score = document.querySelector("#p1Score");
+      const p2Score = document.querySelector("#p2Score");
+      
+      const board = game.getGameBoard();
+      board.forEach((row) => {
+            row.forEach((cell) => {
+                  const newDiv = document.createElement("div");
+                  newDiv.classList.add("cells");
 
-// console.table(Gameboard.getGameboard());
-
-// const startGame = document.querySelector("button");
-// startGame.addEventListener("click", (e) => {
-//       e.preventDefault();
-//       Player1.turn = true;
-//       for(let p = 0; p < 9; p++){
-//             if(Player1.turn === false && Player2.turn === false) {
-//                   break;
-//             }
-//             let playerInput = prompt("Player 1/2:");
-//             if(!playerInput) {break;}
-//             const row = Number(playerInput[0]);
-//             const col = Number(playerInput[1]);
-//             // const [row, col] = playerInput.split(',').map(Number);
-//             if(Player1.turn) {
-//                   player1Turn(row, col);
-//             }else {
-//                   player2Turn(row, col);
-//             }
-//             console.table(Gameboard.getGameboard());
-//       }
-// });
-
-      // Player1.turn = true;
-      // for(let p = 0; p < 9; p++){
-      //       if(Player1.turn === false && Player2.turn === false) {
-      //             break;
-      //       }
-      //       let playerInput = prompt("Player 1/2:");
-      //       if(!playerInput) {break;}
-      //       const row = Number(playerInput[0]);
-      //       const col = Number(playerInput[1]);
-      //       if(Player1.turn) {
-      //             player1Turn(row, col);
-      //       }else {
-      //             player2Turn(row, col);
-      //       }
-      //       console.table(Gameboard.getGameboard());
-      // }
-
-// const checkWinner = (chkPattern = checkPattern(), currentPlayer) => {
-      //       if(chkPattern === true) {
-      //             console.log(`${currentPlayer.token} won the round`);
-      //       }else{
-      //             //Check if draw
-      //             let occupiedCell = 0;
-      //             gameBoard.forEach((row) => {
-      //                   row.forEach((cell) => {
-      //                         if(cell.isEmpty() !== true) {
-      //                               occupiedCell++;
-      //                         }
-      //                   })
-      //             });
-      //             if(occupiedCell === 9) {
-      //                   console.log("It's a draw");
-      //             } 
-      //       }
-      //       Player1.turn = false;
-      //       Player2.turn = false;
-      //       restartGameBoard();  
-      // }
-
-
+                  newDiv.
+            })
+      })
+}
 
 
