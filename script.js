@@ -38,6 +38,8 @@ const GameBoard = () => {
       const updateGameBoard = (row, col, token) => {
             if(gameBoard[row][col].isEmpty() === true) {
                   gameBoard[row][col].setValue(token);
+            }else{
+                  console.log("Cell is occupied");
             }
       };
 
