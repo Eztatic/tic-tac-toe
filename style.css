@@ -20,28 +20,36 @@ div.main-content {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      outline: 2px solid red;
 }
 
 p.title {
       font-weight: 700;
       font-size: 64px;
+      margin-bottom: 24px;
 }
 
-div.scores > p, div.announcer > p {
-      font-weight: 600;
-      font-size: 36px;
+p#announcer {
+      background-color: #bbbbbb;
+      padding: 4px 24px;
+      /* border-radius: 25px; */
 }
 
 div.scores {
+      margin-top: 8px;
       display: flex;
       gap: 128px;
+}
+
+div.scores > p, div > p#announcer {
+      font-weight: 600;
+      font-size: 36px;
 }
 
 div.ttt-board-container {
       width: 500px;
       height: 490px;
       border-radius: 16px;
+      margin: 36px 0;
       display: grid;
       justify-content: center;
       align-items: center;
@@ -50,11 +58,21 @@ div.ttt-board-container {
       grid-template-rows: repeat(3, 1fr);   
 }
 
-div.ttt-board-container > div {
+.cells {
       background-color: rgb(255, 255, 255);
       border: 2px solid #000;
       border-radius: 6px;
       width: auto;
       height: 150px;
       cursor: pointer;
+      opacity: 0.75;
+      position: relative;
+}
+
+img {
+      width: 120px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
 }

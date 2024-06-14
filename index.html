@@ -13,23 +13,24 @@
 <body>
       <div class="main-content">
             <p class="title">Tic-Tac-Toe</p>
-            <div class="scores">
-                  <p>X's Score: <span>0</span></p>
-                  <p>O's Score: <span>0</span></p>
+            <div>
+                  <p id="announcer">Click Anywhere to Play!</p>
             </div>
             <div class="ttt-board-container">
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
-                  <div></div>
+                  <div class="cells"><img src="./X.png" alt="X"></div>
+                  <div class="cells"><img src="./O.png" alt="O"></div>
+                  <div class="cells"></div>
+                  <div class="cells"></div>
+                  <div class="cells"></div>
+                  <div class="cells"></div>
+                  <div class="cells"></div>
+                  <div class="cells"></div>
+                  <div class="cells"></div>
             </div>
-            <div class="announcer">
-                  <p class="detail">X's Turn</p>
+            <h1>Score Board</h1>
+            <div class="scores">
+                  <p>X's Score: <span id="p1Score">0</span></p>
+                  <p>O's Score: <span id="p2Score">0</span></p>
             </div>
       </div>
 </body>
