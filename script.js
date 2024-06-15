@@ -39,7 +39,7 @@ const GameBoard = () => {
             if(gameBoard[row][col].isEmpty() === true) {
                   gameBoard[row][col].setValue(token);
             }else{
-                  console.log("Cell is occupied");
+                  return false;
             }
       };
 
@@ -84,6 +84,19 @@ const GameController = () => {
  
       let gameStatus = false;
       let currentPlayer = Player1;
+      let result;
+
+      const getGameStatus = () => {
+            return gameStatus;
+      }
+
+      const getCurrentPlayer = () => {
+            return currentPlayer;
+      }
+
+      const getResult = () => {
+            return result;
+      }
 
       const theGameBoard = GameBoard();
 
@@ -103,31 +116,23 @@ const GameController = () => {
             theGameBoard.updateGameBoard(row, col, currentPlayer.token);
       }
 
-      const startGame = () => {
+      const initiate = () => {
             gameStatus = true;
             theGameBoard.generateGameBoard();
-            while(gameStatus) {
-                  let input = prompt("Enter row and col (separated by a space)").split(' ');
-                  let testRow = Number(input[0]);
-                  let testCol = Number(input[1]);
-                  playRound(testRow, testCol);
-                  console.log(`${currentPlayer.token} is done`);
-                  checkWinner(currentPlayer);
-                  switchTurn();
-            }
       }
 
       const checkWinner = (currPlayer) => {
             if(theGameBoard.checkPattern() === true) {
-                  console.log(`${currPlayer.token} won the round`);
-                  gameStatus = false;
+                  console.log(`${currPlayer.token} won the round`);      
                   Player1.turn = false;
                   Player2.turn = false;
                   theGameBoard.restartGameBoard(); 
+                  gameStatus = false;
+                  result = `${currPlayer.token} Wins`;
             }else{
                   //Check if draw
                   let occupiedCell = 0;
-                  theGameBoard.getGameboard().forEach((row) => {
+                  theGameBoard.getGameBoard().forEach((row) => {
                         row.forEach((cell) => {
                               if(cell.isEmpty() !== true) {
                                     occupiedCell++;
@@ -140,31 +145,72 @@ const GameController = () => {
                         Player1.turn = false;
                         Player2.turn = false;
                         theGameBoard.restartGameBoard(); 
+                        gameStatus = false;
+                        result = 'Draw';
                   } 
             } 
       }
 
-      return { startGame, getGameBoard : theGameBoard.getGameBoard };
+      return {initiate, getGameBoard: theGameBoard.getGameBoard, playRound, switchTurn, checkWinner, getCurrentPlayer, getGameStatus, getResult};
 }
-
-const newGame = GameController();
-//newGame.startGame();
 
 const GameDisplay = () => {
       const game = GameController();
+      const boardContainer = document.querySelector(".ttt-board-container")
       const announcer = document.querySelector("#announcer");
       const p1Score = document.querySelector("#p1Score");
       const p2Score = document.querySelector("#p2Score");
       
-      const board = game.getGameBoard();
-      board.forEach((row) => {
-            row.forEach((cell) => {
-                  const newDiv = document.createElement("div");
-                  newDiv.classList.add("cells");
+      game.initiate();
 
-                  newDiv.
+      const board = game.getGameBoard();
+            board.forEach((row, rowIndex) => {
+                  row.forEach((col, colIndex) => {
+                        const newDiv = document.createElement("div");
+                        newDiv.classList.add("cells");
+                        newDiv.dataset.cellID = `${rowIndex}${colIndex}`;   
+                        boardContainer.appendChild(newDiv);
             })
       })
+
+      const restartBoard = () => {
+            const allCells = document.querySelectorAll(".cells");
+            allCells.forEach(cell => {
+                  cell.removeChild(cell.firstChild);
+            })
+      }
+
+      boardContainer.addEventListener("click", (e) => {
+            e.preventDefault();
+            const selectedCell = e.target.dataset.cellID;
+
+            if (!selectedCell) return;
+
+            const row = Number(selectedCell[0]);
+            const col = Number(selectedCell[1]);
+
+            game.playRound(row, col);
+
+            const img = document.createElement("img");
+            if(game.getCurrentPlayer().token === "X") {
+                  img.src = "./X.png";    
+            }else{
+                  img.src = "./O.png";
+            }
+            
+            e.target.appendChild(img);
+            console.log(typeof game.getResult());
+            if(game.getGameStatus() === false) {
+                  announcer.innerText = game.getResult();
+                  restartBoard();
+            }
+            game.checkWinner(game.getCurrentPlayer());
+            game.switchTurn();
+            announcer.innerText = `${game.getCurrentPlayer().token}'s Turn`;
+      });
 }
+
+//Start Game
+GameDisplay();
 
 
