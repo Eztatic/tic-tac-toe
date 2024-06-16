@@ -102,6 +102,10 @@ const GameController = () => {
             gameStatus = s;
       }
 
+      const getPlayerScores = () => {
+            return [Player1.score, Player2.score];
+      }
+
       const theGameBoard = GameBoard();
 
       const switchTurn = () => {
@@ -133,6 +137,7 @@ const GameController = () => {
                   theGameBoard.restartGameBoard(); 
                   gameStatus = false;
                   result = `${currPlayer.token} Wins`;
+                  currPlayer.score++;
             }else{
                   //Check if draw
                   let occupiedCell = 0;
@@ -155,7 +160,7 @@ const GameController = () => {
             } 
       }
 
-      return {initiate, getGameBoard: theGameBoard.getGameBoard, playRound, switchTurn, checkWinner, getCurrentPlayer, getGameStatus, setGameStatus,getResult};
+      return {initiate, getGameBoard: theGameBoard.getGameBoard, playRound, switchTurn, checkWinner, getCurrentPlayer, getGameStatus, setGameStatus, getResult, getPlayerScores};
 }
 
 const GameDisplay = () => {
@@ -212,6 +217,8 @@ const GameDisplay = () => {
             game.checkWinner(game.getCurrentPlayer());
             if(game.getGameStatus() === false) {
                   announcer.innerText = game.getResult();
+                  p1Score.innerText = game.getPlayerScores()[0];
+                  p2Score.innerText = game.getPlayerScores()[1];
                   playAgain.style.display = "block";
                   return;
             }
