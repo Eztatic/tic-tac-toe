@@ -15,7 +15,7 @@ const GameBoard = () => {
             }
 
             return {isEmpty, getValue, setValue};
-      }
+      };
 
       const generateGameBoard = () => {
             for(let i = 0; i < 3; i++){
@@ -24,23 +24,23 @@ const GameBoard = () => {
                         gameBoard[i].push(Cell());
                   }
             }
-      }
+      };
       
       const getGameBoard = () => {
             return gameBoard;
-      }
-      
-      const restartGameBoard = () => {
-            gameBoard.length = 0;
-            generateGameBoard();
       };
-
+      
       const updateGameBoard = (row, col, token) => {
             if(gameBoard[row][col].isEmpty() === true) {
                   gameBoard[row][col].setValue(token);
             }else{
                   return false;
             }
+      };
+
+      const restartGameBoard = () => {
+            gameBoard.length = 0;
+            generateGameBoard();
       };
 
       const checkPattern = () => {
@@ -82,6 +82,8 @@ const GameController = () => {
             turn: false
       }
  
+      const theGameBoard = GameBoard();
+
       let gameStatus = false;
       let currentPlayer = Player1;
       let result;
@@ -98,15 +100,18 @@ const GameController = () => {
             return result;
       }
 
-      const setGameStatus = (s) => {
-            gameStatus = s;
-      }
-
       const getPlayerScores = () => {
             return [Player1.score, Player2.score];
       }
 
-      const theGameBoard = GameBoard();
+      const playRound = (row, col) => {
+            theGameBoard.updateGameBoard(row, col, currentPlayer.token);
+      }
+
+      const initiate = () => {
+            gameStatus = true;
+            theGameBoard.generateGameBoard();
+      }
 
       const switchTurn = () => {
             if(currentPlayer === Player1){
@@ -120,18 +125,8 @@ const GameController = () => {
             }
       }
 
-      const playRound = (row, col) => {
-            theGameBoard.updateGameBoard(row, col, currentPlayer.token);
-      }
-
-      const initiate = () => {
-            gameStatus = true;
-            theGameBoard.generateGameBoard();
-      }
-
       const checkWinner = (currPlayer) => {
-            if(theGameBoard.checkPattern() === true) {
-                  console.log(`${currPlayer.token} won the round`);      
+            if(theGameBoard.checkPattern() === true) {     
                   Player1.turn = false;
                   Player2.turn = false;
                   theGameBoard.restartGameBoard(); 
@@ -149,7 +144,6 @@ const GameController = () => {
                         })
                   });
                   if(occupiedCell === 9) {
-                        console.log("It's a draw");
                         gameStatus = false;
                         Player1.turn = false;
                         Player2.turn = false;
@@ -160,11 +154,13 @@ const GameController = () => {
             } 
       }
 
-      return {initiate, getGameBoard: theGameBoard.getGameBoard, playRound, switchTurn, checkWinner, getCurrentPlayer, getGameStatus, setGameStatus, getResult, getPlayerScores};
+      return {initiate, getGameBoard: theGameBoard.getGameBoard, playRound, switchTurn, checkWinner, getCurrentPlayer, getGameStatus, getResult, getPlayerScores};
 }
 
 const GameDisplay = () => {
       const game = GameController();
+      const board = game.getGameBoard();
+
       const boardContainer = document.querySelector(".ttt-board-container")
       const announcer = document.querySelector("#announcer");
       const playAgain = document.querySelector("#play-again");
@@ -173,7 +169,6 @@ const GameDisplay = () => {
       
       game.initiate();
 
-      const board = game.getGameBoard();
       const genCellUI = () => {
             board.forEach((row, rowIndex) => {
                         row.forEach((col, colIndex) => {
@@ -186,22 +181,16 @@ const GameDisplay = () => {
       }
       genCellUI();
 
-      playAgain.addEventListener("click", () => {
-            boardContainer.innerHTML = "";
-            game.initiate();
-            genCellUI();
-            announcer.innerText = `${game.getCurrentPlayer().token}'s Turn`;
-            playAgain.style.display = "none";
-      });
-
       boardContainer.addEventListener("click", (e) => {
             e.preventDefault();
             const selectedCell = e.target.dataset.cellID;
 
             if (!selectedCell) return;
 
-            const row = Number(selectedCell[0]);
-            const col = Number(selectedCell[1]);
+            // const row = Number(selectedCell[0]);
+            // const col = Number(selectedCell[1]);
+
+            const [row, col] = selectedCell.split('').map(Number);
 
             game.playRound(row, col);
 
@@ -229,6 +218,14 @@ const GameDisplay = () => {
 
             game.switchTurn();
             announcer.innerText = `${game.getCurrentPlayer().token}'s Turn`;
+      });
+
+      playAgain.addEventListener("click", () => {
+            boardContainer.innerHTML = "";
+            game.initiate();
+            genCellUI();
+            announcer.innerText = `${game.getCurrentPlayer().token}'s Turn`;
+            playAgain.style.display = "none";
       });
 }
 
