@@ -187,7 +187,6 @@ const GameDisplay = () => {
       genCellUI();
 
       playAgain.addEventListener("click", () => {
-            //game.setGameStatus(true);
             boardContainer.innerHTML = "";
             game.initiate();
             genCellUI();
@@ -217,6 +216,11 @@ const GameDisplay = () => {
             game.checkWinner(game.getCurrentPlayer());
             if(game.getGameStatus() === false) {
                   announcer.innerText = game.getResult();
+                  const allCells = Array.from(document.querySelectorAll(".cells"));
+                  allCells.forEach((divNode) => {
+                        divNode.style.pointerEvents = "none";
+                        console.log("sdf");
+                  })
                   p1Score.innerText = game.getPlayerScores()[0];
                   p2Score.innerText = game.getPlayerScores()[1];
                   playAgain.style.display = "block";
