@@ -98,6 +98,10 @@ const GameController = () => {
             return result;
       }
 
+      const setGameStatus = (s) => {
+            gameStatus = s;
+      }
+
       const theGameBoard = GameBoard();
 
       const switchTurn = () => {
@@ -151,34 +155,40 @@ const GameController = () => {
             } 
       }
 
-      return {initiate, getGameBoard: theGameBoard.getGameBoard, playRound, switchTurn, checkWinner, getCurrentPlayer, getGameStatus, getResult};
+      return {initiate, getGameBoard: theGameBoard.getGameBoard, playRound, switchTurn, checkWinner, getCurrentPlayer, getGameStatus, setGameStatus,getResult};
 }
 
 const GameDisplay = () => {
       const game = GameController();
       const boardContainer = document.querySelector(".ttt-board-container")
       const announcer = document.querySelector("#announcer");
+      const playAgain = document.querySelector("#play-again");
       const p1Score = document.querySelector("#p1Score");
       const p2Score = document.querySelector("#p2Score");
       
       game.initiate();
 
       const board = game.getGameBoard();
+      const genCellUI = () => {
             board.forEach((row, rowIndex) => {
-                  row.forEach((col, colIndex) => {
-                        const newDiv = document.createElement("div");
-                        newDiv.classList.add("cells");
-                        newDiv.dataset.cellID = `${rowIndex}${colIndex}`;   
-                        boardContainer.appendChild(newDiv);
-            })
-      })
-
-      const restartBoard = () => {
-            const allCells = document.querySelectorAll(".cells");
-            allCells.forEach(cell => {
-                  cell.removeChild(cell.firstChild);
+                        row.forEach((col, colIndex) => {
+                              const newDiv = document.createElement("div");
+                              newDiv.classList.add("cells");
+                              newDiv.dataset.cellID = `${rowIndex}${colIndex}`;   
+                              boardContainer.appendChild(newDiv);
+                  })
             })
       }
+      genCellUI();
+
+      playAgain.addEventListener("click", () => {
+            //game.setGameStatus(true);
+            boardContainer.innerHTML = "";
+            game.initiate();
+            genCellUI();
+            announcer.innerText = `${game.getCurrentPlayer().token}'s Turn`;
+            playAgain.style.display = "none";
+      });
 
       boardContainer.addEventListener("click", (e) => {
             e.preventDefault();
@@ -199,12 +209,13 @@ const GameDisplay = () => {
             }
             
             e.target.appendChild(img);
-            console.log(typeof game.getResult());
+            game.checkWinner(game.getCurrentPlayer());
             if(game.getGameStatus() === false) {
                   announcer.innerText = game.getResult();
-                  restartBoard();
+                  playAgain.style.display = "block";
+                  return;
             }
-            game.checkWinner(game.getCurrentPlayer());
+
             game.switchTurn();
             announcer.innerText = `${game.getCurrentPlayer().token}'s Turn`;
       });
